@@ -1,7 +1,5 @@
 package com.example.auth.entities;
 
-
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
