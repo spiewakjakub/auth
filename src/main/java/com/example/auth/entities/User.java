@@ -1,14 +1,21 @@
 package com.example.auth.entities;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity(name = "users_table")
-public class User {
+public class User implements UserDetails {
     @Id
-    @GeneratedValue
-    private long id;
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    public long id;
     private String username;
     private String password;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -19,7 +26,40 @@ public class User {
     public User(String username, String password, List<Role> roles) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        this.roles = new LinkedList<>();
+        roles.forEach(this::addRole);
+    }
+
+    private void addRole(Role role) {
+        roles.add(role);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public long getId() {
