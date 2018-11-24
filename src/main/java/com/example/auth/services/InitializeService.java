@@ -1,17 +1,13 @@
-package com.example.services;
-
-import com.example.auth.entities.Role;
-import com.example.auth.entities.User;
-import com.example.auth.repositories.RoleRepository;
-import com.example.auth.repositories.UserRepository;
-
-import java.util.ArrayList;
+package com.example.auth.services;
 
 public class InitializeService {
-    private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
+   /* private final RoleRepository roleRepository;
+    private final ApplicationUserRepository userRepository;
 
-    public InitializeService(RoleRepository roleRepository, UserRepository userRepository) {
+    @Value("${security.encoding-strength}")
+    private Integer encodingStrength;
+
+    public InitializeService(RoleRepository roleRepository, ApplicationUserRepository userRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
     }
@@ -25,23 +21,24 @@ public class InitializeService {
         System.out.println("[UserRepository is empty] : " + userRepository.findAll().isEmpty());
 
         if (userRepository.findAll().isEmpty()) {
-            User user1 = new User("admin", "admin", new ArrayList<Role>() {{
+            SCryptPasswordEncoder encoder = new SCryptPasswordEncoder();
+            ApplicationUser user1 = new ApplicationUser("admin", encoder.encode("admin"), new ArrayList<Role>() {{
                 add(new Role("admin"));
                 add(new Role("sysadmin"));
                 add(new Role("user"));
                 add(new Role("superuser"));
             }});
             //user1.getRoles().forEach(roleRepository::save);
-            User user2 = new User("sysadmin", "qwerty", new ArrayList<Role>() {{
+            ApplicationUser user2 = new ApplicationUser("sysadmin", encoder.encode("qwerty"), new ArrayList<Role>() {{
                 add(new Role("admin"));
                 add(new Role("sysadmin"));
             }});
             //user2.getRoles().forEach(roleRepository::save);
-            User user3 = new User("user", "user1", new ArrayList<Role>() {{
+            ApplicationUser user3 = new ApplicationUser("user", encoder.encode("user1"), new ArrayList<Role>() {{
                 add(new Role("user"));
             }});
             //user3.getRoles().forEach(roleRepository::save);
-            User user4 = new User("superuser", "superuser123", new ArrayList<Role>() {{
+            ApplicationUser user4 = new ApplicationUser("superuser", encoder.encode("superuser123"), new ArrayList<Role>() {{
                 add(new Role("admin"));
                 add(new Role("superuser"));
             }});
@@ -54,5 +51,5 @@ public class InitializeService {
 
 
         }
-    }
+    }*/
 }

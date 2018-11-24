@@ -12,7 +12,13 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
     @ResponseBody
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, HttpServletResponse response) {
-        return Integer.valueOf(403).equals(response.getStatus()) ? "<h1>NIE MASZ AUTORYZACJI FIUCIE!!!111!!1!<h1/>" : Integer.toString(response.getStatus());
+        StringBuilder builder = new StringBuilder();
+        builder.append(response.getStatus());
+        builder.append("\n");
+        response.getHeaderNames().forEach(name ->
+                builder.append(name).append("/n")
+        );
+        return builder.toString();
     }
 
     @Override

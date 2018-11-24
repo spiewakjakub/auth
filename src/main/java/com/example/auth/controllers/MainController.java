@@ -1,31 +1,41 @@
 package com.example.auth.controllers;
 
-import com.example.auth.entities.Role;
-import com.example.auth.entities.User;
-import com.example.auth.repositories.RoleRepository;
-import com.example.auth.repositories.UserRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.auth.entities.ApplicationUser;
+import com.example.auth.services.ApplicationUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class MainController {
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private final ApplicationUserService applicationUserService;
 
-    public MainController(UserRepository userRepository, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+    @Autowired
+    public MainController(ApplicationUserService applicationUserService) {
+        this.applicationUserService = applicationUserService;
     }
 
-    @GetMapping(value = "/roles")
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    @GetMapping("/users")
+    public List<ApplicationUser> getAll() {
+        return applicationUserService.getAll();
     }
 
-    @GetMapping(value = "/public/users")
-    public List<User> getAllUser() {
-        return userRepository.findAll();
+    @GetMapping("/users/id/{id}")
+    public Optional<ApplicationUser> getById(@PathVariable Long id) {
+        return applicationUserService.getById(id);
     }
+
+    @GetMapping("/users/{username}")
+    public Optional<ApplicationUser> getByUsername(@PathVariable String username) {
+        return applicationUserService.getByUsername(username);
+    }
+
+    @PutMapping("/users")
+    public Optional<ApplicationUser> insert(@RequestBody ApplicationUser applicationUser) {
+        return applicationUserService.save(applicationUser);
+    }
+
+
 }
