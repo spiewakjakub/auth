@@ -1,7 +1,7 @@
 package com.example.auth.services;
 
-import com.example.auth.entities.ApplicationUser;
-import com.example.auth.repositories.ApplicationUserRepository;
+import com.example.auth.entities.User;
+import com.example.auth.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,32 +9,31 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ApplicationUserService {
-
-    private final ApplicationUserRepository applicationUserRepository;
+public class UserService {
+    private final UserRepository userRepository;
 
     @Autowired
-    public ApplicationUserService(ApplicationUserRepository applicationUserRepository) {
-        this.applicationUserRepository = applicationUserRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public Optional<ApplicationUser> getById(Long id) {
-        return applicationUserRepository.findById(id);
+    public Optional<User> getById(Long id) {
+        return userRepository.findById(id);
     }
 
-    public Optional<ApplicationUser> getByUsername(String username) {
-        return applicationUserRepository.findByUsername(username);
+    public Optional<User> getByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
-    public Optional<ApplicationUser> getByUsernameAnePassword(String username, String password) {
-        return applicationUserRepository.findByUsernameAndPassword(username, password);
+    public Optional<User> getByUsernameAnePassword(String username, String password) {
+        return userRepository.findByUsernameAndPassword(username, password);
     }
 
-    public List<ApplicationUser> getAll() {
-        return applicationUserRepository.findAll();
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 
-    public Optional<ApplicationUser> save(ApplicationUser user) {
-        return Optional.of(applicationUserRepository.save(user));
+    public Optional<User> save(User user) {
+        return Optional.of(userRepository.save(user));
     }
 }

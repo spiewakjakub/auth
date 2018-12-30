@@ -6,9 +6,9 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@Entity(name = "ApplicationUser")
 @Data
-public class ApplicationUser {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     public long id;
@@ -18,10 +18,10 @@ public class ApplicationUser {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Role> roles;
 
-    public ApplicationUser() {
+    public User() {
     }
 
-    public ApplicationUser(String username, String password, List<Role> roles) {
+    public User(String username, String password, List<Role> roles) {
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -30,8 +30,8 @@ public class ApplicationUser {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ApplicationUser)) return false;
-        ApplicationUser user = (ApplicationUser) o;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
         return getId() == user.getId() &&
                 Objects.equals(getUsername(), user.getUsername()) &&
                 Objects.equals(getPassword(), user.getPassword()) &&
@@ -45,7 +45,7 @@ public class ApplicationUser {
 
     @Override
     public String toString() {
-        return "ApplicationUser{" +
+        return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
