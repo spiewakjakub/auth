@@ -36,4 +36,8 @@ public class UserService {
     public Optional<User> save(User user) {
         return Optional.of(userRepository.save(user));
     }
+
+    public boolean isExist(String username, String password) {
+        return userRepository.existsUserByUsernameAndPassword(username, password);
+    }
 }

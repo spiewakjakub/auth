@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class MainController {
@@ -19,6 +20,14 @@ public class MainController {
 
     @GetMapping("/users")
     public List<User> getAll() {
+        return applicationUserService.getAll().stream()
+                .peek(user -> user.setPassword("********"))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("private/users")
+    public List<User> getAllPrivate() {
+        System.out.println("[called] /private/users");
         return applicationUserService.getAll();
     }
 
@@ -36,6 +45,4 @@ public class MainController {
     public Optional<User> insert(@RequestBody User user) {
         return applicationUserService.save(user);
     }
-
-
 }
