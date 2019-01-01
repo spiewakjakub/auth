@@ -20,14 +20,14 @@ public class MainController {
 
     @GetMapping("/users")
     public List<User> getAll() {
-        return applicationUserService.getAll().stream()
+        return applicationUserService.getAll()
+                .stream()
                 .peek(user -> user.setPassword("********"))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("private/users")
     public List<User> getAllPrivate() {
-        System.out.println("[called] /private/users");
         return applicationUserService.getAll();
     }
 
