@@ -14,9 +14,9 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
     public String handleError(HttpServletRequest request, HttpServletResponse response) {
         StringBuilder builder = new StringBuilder();
         builder.append(response.getStatus());
-        builder.append("\n");
+        builder.append("     ");
         response.getHeaderNames().forEach(name ->
-                builder.append(name).append("/n")
+                builder.append(name).append("     ")
         );
         return builder.toString();
     }

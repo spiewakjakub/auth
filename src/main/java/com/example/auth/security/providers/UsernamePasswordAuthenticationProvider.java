@@ -1,6 +1,8 @@
 package com.example.auth.security.providers;
 
 import com.example.auth.entities.User;
+import com.example.auth.security.TokenAuthentication;
+import com.example.auth.services.TokenService;
 import com.example.auth.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,18 +10,17 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-
-import java.util.stream.Collectors;
 
 @Component
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
     private final UserService userService;
+    private final TokenService tokenService;
 
     @Autowired
-    public UsernamePasswordAuthenticationProvider(UserService userService) {
+    public UsernamePasswordAuthenticationProvider(UserService userService, TokenService tokenService) {
         this.userService = userService;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -28,17 +29,13 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         String password = authentication.getCredentials().toString();
 
         User user = userService.getByUsernameAnePassword(username, password)
-                .orElseThrow(() -> new BadCredentialsException("Bad username or password"));
+                .orElseThrow(() -> new BadCredentialsException("Cannot log in by: " + username + "!"));
 
+        String token = TokenService.generateNewToken();
+        TokenAuthentication resultOfAuthentication = new TokenAuthentication(user, token);
+        tokenService.store(user, token);
 
-        return new UsernamePasswordAuthenticationToken(
-                user.getUsername(),
-                user.getPassword(),
-                user.getRoles()
-                        .stream()
-                        .map(role -> (GrantedAuthority) role::getName)
-                        .collect(Collectors.toList())
-        );
+        return resultOfAuthentication;
     }
 
     @Override

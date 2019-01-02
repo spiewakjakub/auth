@@ -1,45 +1,58 @@
 package com.example.auth.services;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import com.example.auth.entities.Token;
+import com.example.auth.entities.User;
+import com.example.auth.repositories.TokenRepository;
+import com.example.auth.security.TokenAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Component
+@EnableScheduling
 public class TokenService {
-    private static final int HALF_AN_HOUR_IN_SECONDS = 30 * 60 * 1000;
-    private static final int TWO_HOUR_IN_SECONDS = 2 * 60 * 60 * 1000;
-    private static final Cache cache = CacheManager.getInstance().getCache("tokens_cache");
 
+    private final TokenRepository tokenRepository;
 
-//    @Scheduled(fixedRate = HALF_AN_HOUR_IN_MILLISECONDS)
-//    private void evictExpiredTokens() {
-//        cache.evictExpiredElements();
-//    }
+    @Autowired
+    public TokenService(TokenRepository tokenRepository) {
+        this.tokenRepository = tokenRepository;
+    }
 
-    public String generateNewToken() {
+    private void evictExpiredTokens() {
+        tokenRepository.deleteByCreationTimeBefore(new Timestamp(System.currentTimeMillis() - 10 * 1000));
+    }
+
+    public static String generateNewToken() {
         return UUID.randomUUID().toString();
     }
 
-    public void store(String token, Authentication authentication) {
-        cache.put(
-                new Element(
-                        token,
-                        authentication,
-                        HALF_AN_HOUR_IN_SECONDS,
-                        TWO_HOUR_IN_SECONDS
-                ));
+    public void store(User user, String token) {
+        tokenRepository.save(
+                new Token(
+                        user,
+                        token));
     }
 
     public boolean contains(String token) {
-        return Objects.nonNull(token);
+        return Objects.nonNull(tokenRepository.getTokenByToken(token));
     }
 
     public Authentication retrieve(String token) {
-        return (Authentication) cache.get(token);
+        Token tokenObj = tokenRepository.getTokenByToken(token);
+        System.out.println(tokenObj);
+        return new TokenAuthentication(
+                tokenObj.getUser(),
+                tokenObj.getToken());
+    }
+
+    public List<Token> getAll() {
+        return tokenRepository.findAll();
     }
 }

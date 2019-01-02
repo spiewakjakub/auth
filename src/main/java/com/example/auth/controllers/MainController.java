@@ -1,9 +1,10 @@
 package com.example.auth.controllers;
 
+import com.example.auth.entities.Token;
 import com.example.auth.entities.User;
+import com.example.auth.services.TokenService;
 import com.example.auth.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,10 +14,12 @@ import java.util.stream.Collectors;
 @RestController
 public class MainController {
     private final UserService applicationUserService;
+    private final TokenService tokenService;
 
     @Autowired
-    public MainController(UserService applicationUserService) {
+    public MainController(UserService applicationUserService, TokenService tokenService) {
         this.applicationUserService = applicationUserService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/users")
@@ -27,9 +30,13 @@ public class MainController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/tokens")
+    public List<Token> getAllTokens() {
+        return tokenService.getAll();
+    }
+
     @GetMapping("private/users")
-    public List<User> getAllPrivate(Authentication principal) {
-        System.out.println(principal.getDetails());
+    public List<User> getAllPrivate() {
         return applicationUserService.getAll();
     }
 
