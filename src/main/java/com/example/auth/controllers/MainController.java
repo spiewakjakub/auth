@@ -3,6 +3,7 @@ package com.example.auth.controllers;
 import com.example.auth.entities.User;
 import com.example.auth.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,8 @@ public class MainController {
     }
 
     @GetMapping("private/users")
-    public List<User> getAllPrivate() {
+    public List<User> getAllPrivate(Authentication principal) {
+        System.out.println(principal.getDetails());
         return applicationUserService.getAll();
     }
 

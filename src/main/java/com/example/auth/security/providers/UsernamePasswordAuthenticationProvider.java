@@ -30,6 +30,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         User user = userService.getByUsernameAnePassword(username, password)
                 .orElseThrow(() -> new BadCredentialsException("Bad username or password"));
 
+
         return new UsernamePasswordAuthenticationToken(
                 user.getUsername(),
                 user.getPassword(),
@@ -42,6 +43,6 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return UsernamePasswordAuthenticationToken.class.equals(aClass);
+        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(aClass);
     }
 }
